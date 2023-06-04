@@ -82,8 +82,19 @@ AddPrefabButton.MouseButton1Click:Connect(function()
 		return
 	end
 
-	local PrefabModel = selected:Clone()
-	local PrefabListEntry = PrefabTemplate:Clone()
+	local PrefabModel: Model = selected:Clone()
+	local PrefabListEntry: Frame = PrefabTemplate:Clone()
+	PrefabListEntry.NameText.Text = PrefabModel.Name
+	PrefabModel.Name = "Model"
+	local modelView: ViewportFrame = PrefabListEntry.ModelView
+	PrefabModel.Parent = modelView
+	local cam: Camera = modelView.Camera
+	modelView.CurrentCamera = cam
+	local position, size = PrefabModel:GetBoundingBox()
+	cam.CFrame = position * CFrame.new(position.LookVector * size.Z*2) * CFrame.new(position.UpVector * size.Y * .5)
+	cam.CFrame = CFrame.lookAt(cam.CFrame.Position, position.Position)
+	PrefabListEntry.Parent = PrefabList
+	PrefabListEntry.Visible = true
 end)
 
 -- we just want to have the last open state set again
